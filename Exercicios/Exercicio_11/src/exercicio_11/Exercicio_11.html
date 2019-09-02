@@ -1,0 +1,234 @@
+<html>
+
+<head>
+    <title>GUI de Calculadora</title>
+    <meta name="author" content="Prof. Fábio">
+    <meta name="copyright" content="PI/IHC">
+    <meta name="keywords" content="HTML">
+    <style type="text/css">
+        /* Conteúdo do CSS */
+        /* formatação do corpo do documento HTML */
+        body {
+            /* cor de fundo */
+            background-color: rgb(220, 220, 220);
+        }
+
+        /* formatação dos elementos input do formulário com a classe=limpar */
+        form input.limpar {
+            /* largura em pixels */
+            width: 70px;
+            /* cor de fundo */
+            background-color: rgb(255, 0, 0);
+            /* cor da fonte */
+            color: rgb(255, 255, 255);
+            /* estilo da fonte como negrito */
+            font-weight: bold;
+        }
+
+        /* formatação dos elementos input do formulário com a classe=oper */
+        form input.oper {
+            width: 75px;
+            background-color: rgb(173, 216, 230);
+            font-weight: bold;
+        }
+
+        /* formatação dos elementos label do formulário com a classe=num */
+        form label.num {
+            color: rgb(0, 0, 255);
+            font-weight: bold;
+        }
+
+        /* formatação dos elementos label do formulário com a classe=res */
+        form label.res {
+            color: rgb(255, 0, 0);
+            font-weight: bold;
+        }
+    </style>
+
+    <script type="text/javascript" src="NumberFormat154.js" ></script>
+
+    <script type="text/javascript">
+        
+        var valor ;
+        var formato = "reais";
+        var casasDecimais = 2;
+
+        function Limpar() {
+            document.calculadora.num1.value = '';
+
+            document.calculadora.num2.value = '';
+
+            document.calculadora.resultado.value = '';
+
+            delete valor1;
+
+            delete valor2;
+            
+            delete valor;
+
+            //gambiarra, pensei em outra forma
+            valor = 0;
+        }
+
+        function Calcula(oper) {
+
+            var valor1 = document.calculadora.num1.value;
+
+            var valor2 = document.calculadora.num2.value;
+
+            if (oper == "somar") {
+                valor = parseFloat(valor1) + parseFloat(valor2);
+            }
+            else if (oper == "subtrair") {
+                valor = parseFloat(valor1) - parseFloat(valor2);
+            }
+            else if (oper == "multiplicar") {
+                //valor2 convertidos para float
+                valor = parseFloat(valor1) * parseFloat(valor2);
+            }
+            // verifica se a operação é de divisão
+            else if (oper == "dividir") {
+                // cria a variável de memória valor com o valor da divisão de valor1 e valor2
+                //convertidos para float
+                valor = parseFloat(valor1) / parseFloat(valor2);
+            } else if (oper == "quadrado") {
+                // cria a variável de memória valor com o valor do quadrado de valor1
+                //convertidos para float
+                valor = parseFloat(valor1) * parseFloat(valor1);
+            } else if (oper == "potencia") {
+                // cria a variável de memória valor com o valor da potência de valor1 elevado ao valor2
+                //convertidos para float
+                valor = parseFloat(Math.pow(valor1, valor2));
+            } else if (oper == "raiz") {
+                // cria a variável de memória valor com o valor da raiz quadrada de valor1
+                //convertidos para float
+                valor = parseFloat(Math.sqrt(valor1));
+            } else if (oper == "reais") {
+                formato = "reais";
+                
+            } else if (oper == "monetario") {
+                formato = "monetario";
+                
+            } else if (oper == "porcentagem") {
+                formato = "porcentagem";
+
+            }else if (oper == "aumentarCasa"){
+                casasDecimais++;
+
+            }else if (oper == "diminuirCasa"){
+                casasDecimais--;
+    
+            }
+            
+            if(!valor){
+                valor = 0;
+            }
+
+            var valorResultado;
+
+            switch(formato){
+
+                case "reais":
+                    valorResultado = valor.toFixed(casasDecimais);
+
+                    break;
+                case "monetario":
+                    valorResultado = new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                                minimumFractionDigits: casasDecimais})
+                            .format(valor);
+                    
+                    break;
+                case "porcentagem":
+                    valorResultado = valor.toLocaleString(undefined,{style: 'percent', minimumFractionDigits:casasDecimais})    
+                    
+                    break;
+
+                default:
+                    valorResultado = valor.toFixed(casasDecimais);
+
+                    break;
+
+            }
+            
+
+            if(casasDecimais == 0){
+                document.querySelector("input[name=diminuirCasa]").setAttribute("disabled",true);
+            }else{
+                document.querySelector("input[name=diminuirCasa]").removeAttribute("disabled");
+            }          
+
+            // atribui o conteúdo de valor para a caixa de texto resultado do formulário
+            //calculadora do documento HTML
+            document.calculadora.resultado.value = valorResultado;
+        }
+    </script>
+</head>
+
+<body>
+    <!-- cria um formulário com o nome de calculadora -->
+    <form name="calculadora" method="post" action="">
+        <fieldset>
+            <legend>Calculadora</legend>
+            <!-- cria uma tabela com 3 linhas e 4 colunas -->
+            <table>
+                <!-- define o corpo da tabela -->
+                <tbody>
+                    <!-- primeira linha da tabela -->
+                    <tr>
+                        <!-- coluna 1 da tabela -->
+                        <td><label class="num" for="num1">1o Num</label></td>
+                        <!-- coluna 2 da tabela -->
+                        <td><input name="num1" id="num1" type="text" size="5"></td>
+                        <!-- coluna 3 da tabela -->
+                        <td><input name="somar" class="oper" value="+" onclick="Calcula('somar')" type="button"></td>
+                        <!-- coluna 4 da tabela -->
+                        <td><input name="subtrair" class="oper" value="-" onclick="Calcula('subtrair')" type="button">
+                        </td>
+                    </tr>
+                    <!-- segunda linha da tabela -->
+                    <tr>
+                        <td><label class="num" for="num2">2o Num</label></td>
+                        <td><input name="num2" id="num2" type="text" size="5"></td>
+                        <td><input name="multiplicar" class="oper" value="x" onclick="Calcula('multiplicar')"
+                                type="button"></td>
+                        <td><input name="dividir" class="oper" value="/" onclick="Calcula('dividir')" type="button">
+                        </td>
+                    </tr>
+                    <!-- terceira linha da tabela -->
+                    <tr>
+                        <td><label class="res" for="resultado">Resultado</label></td>
+                        <td><input name="resultado" id="resultado" type="text" readonly="true" size="5"></td>
+                        <td> <input name="quadrado" class="oper" value="Quadrado" onclick="Calcula('quadrado')"
+                                type="button"></td>
+                        <td> <input name="potencia" class="oper" value="Potência" onclick="Calcula('potencia')"
+                                type="button"></td>
+                    </tr>
+                    <!-- quarta linha da tabela -->
+                    <tr>
+                        <td> <input name="raiz" class="oper" value="Raiz" onclick="Calcula('raiz')" type="button"></td>
+                        <td> <input name="reais" class="oper" value="0.00" onclick="Calcula('reais')" type="button">
+                        </td>
+                        <td> <input name="monetario" class="oper" value="R$" onclick="Calcula('monetario')"
+                                type="button"></td>
+                        <td> <input name="porcentagem" class="oper" value="0.00%" onclick="Calcula('porcentagem')"
+                                type="button"></td>
+                    </tr>
+                    <!-- quinta linha da tabela -->
+                    <tr>
+                        <td></td>
+                        <td> <input name="aumentarCasa" class="oper" value=">>" onclick="Calcula('aumentarCasa')"
+                                type="button"></td>
+                        <td> <input name="diminuirCasa" class="oper" value="<<" onclick="Calcula('diminuirCasa')"
+                                type="button" ></td>
+                        <td><input class="limpar" name="limpar" value="Limpar" onclick="Limpar()" type="button"></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </form>
+</body>
+
+</html>
